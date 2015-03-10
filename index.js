@@ -10,7 +10,7 @@ module.exports = (function(socketIo, eventTypesToListen) {
   var listenToSocket = function(socket, eventType) {
     return Bacon.fromBinder(function(sink) {
       socket.on(eventType, function(socketData) {
-        sink({ eventType, socket, socketData })
+        sink({ eventType: eventType, socket: socket, socketData: socketData })
       })
       socket.on('disconnect', function() {
         sink(new Bacon.End())

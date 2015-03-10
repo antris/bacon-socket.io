@@ -1,6 +1,12 @@
 var Bacon = require('baconjs')
 
-module.exports = (function(socketIo, eventTypesToListen) {
+module.exports = (function(socketIo) {
+  var newEventTypeToListen = new Bacon.Bus()
+
+  var eventTypesToListen = Bacon.update([],
+    [newEventTypeToListen], function(eventTypes, eventType) { return eventTypes.concat(eventType) }
+  )
+
   var incomingSockets = Bacon.fromBinder(function(sink) {
     socketIo.on('connection', function(socket) {
       sink(socket)
@@ -18,12 +24,6 @@ module.exports = (function(socketIo, eventTypesToListen) {
     })
   }
 
-  var allEvents = incomingSockets.flatMap(function(socket) {
-    return Bacon.mergeAll(eventTypesToListen.map(function(eventType) {
-      return listenToSocket(socket, eventType)
-    }))
-  })
-
   var disconnectingSockets = incomingSockets.flatMap(function(socket) {
     return Bacon.fromCallback(function(callback) {
       socket.on('disconnect', function() {
@@ -39,13 +39,33 @@ module.exports = (function(socketIo, eventTypesToListen) {
     }
   )
 
+  var allEvents = Bacon.combineAsArray(newEventTypeToListen, openSockets)
+    .sampledBy(newEventTypeToListen)
+    .flatMap(function(eventType, sockets) {
+      return Bacon.mergeAll(openSockets.map(function(socket) {
+        return listenToSocket(socket, eventType)
+      }))
+    })
+    .merge(
+      Bacon.combineAsArray(eventTypesToListen, incomingSockets)
+        .sampledBy(incomingSockets)
+        .flatMap(function(eventTypes, socket) {
+          return Bacon.mergeAll(eventTypes.map(function(eventType) {
+            return listenToSocket(socket, eventType)
+          }))
+        })
+    )
+
   var listenToAllSocketsOfType = function(targetEventType) {
     return allEvents.filter(function(socketEvent) {
       return targetEventType == socketEvent.eventType
     })
   }
   return {
-    listenToAllSocketsOfType: listenToAllSocketsOfType,
+    listenToAllSocketsOfType: function(eventType) {
+      newEventTypeToListen.push(eventType)
+      return listenToAllSocketsOfType(eventType)
+    },
     openSockets: openSockets
   }
 })

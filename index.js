@@ -20,7 +20,7 @@ module.exports = (function(socketIo, eventTypesToListen) {
 
   var allEvents = incomingSockets.flatMap(function(socket) {
     return Bacon.mergeAll(eventTypesToListen.map(function(eventType) {
-      listenToSocket(socket, eventType)
+      return listenToSocket(socket, eventType)
     }))
   })
 

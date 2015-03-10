@@ -1,0 +1,11 @@
+{
+  "name": "bacon-socket.io",
+  "version": "0.0.1",
+  "description": "A library that transforms WebSockets into Bacon EventStreams. Uses socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Anton Rissanen",
+  "license": "MIT"
+}

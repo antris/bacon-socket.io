@@ -41,7 +41,7 @@ module.exports = (function(socketIo) {
 
   var allEvents = Bacon.combineAsArray(newEventTypeToListen, openSockets)
     .sampledBy(newEventTypeToListen)
-    .flatMap(function(eventType, sockets) {
+    .flatMap(function(eventType, openSockets) {
       return Bacon.mergeAll(openSockets.map(function(socket) {
         return listenToSocket(socket, eventType)
       }))

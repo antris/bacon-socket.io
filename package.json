@@ -1,6 +1,6 @@
 {
   "name": "bacon-socket.io",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A library that transforms WebSockets into Bacon EventStreams. Uses socket.io",
   "main": "index.js",
   "scripts": {

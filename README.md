@@ -47,6 +47,23 @@ This will print out:
 1IfF0ZFJOjTls5IvAAAG World! 10
 ```
 
+If you want to send messages to the client, use the socket provided by the
+stream, like this:
+
+```js
+sockets.listenToAllSocketsOfType('hello').onValue(function(socketEvent) {
+  socketEvent.socket.emit('hello', 'whaddup!')
+})
+```
+
+Which you can then again listen to with the socket.io client in the browser:
+
+```js
+socket.on("hello", function(x) {
+  console.log('got a response: ' + x) // got a response: whaddup!
+})
+```
+
 ## Install
 
 Install from npm:

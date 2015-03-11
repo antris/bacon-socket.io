@@ -1,5 +1,4 @@
 var Bacon = require('baconjs')
-
 module.exports = (function(socketIo) {
   var newEventTypeToListen = new Bacon.Bus()
 
@@ -41,7 +40,9 @@ module.exports = (function(socketIo) {
 
   var allEvents = Bacon.combineAsArray(newEventTypeToListen, openSockets)
     .sampledBy(newEventTypeToListen)
-    .flatMap(function(eventType, openSockets) {
+    .flatMap(function() {
+      var eventType = arguments[0][0]
+      var openSockets = arguments[0][1]
       return Bacon.mergeAll(openSockets.map(function(socket) {
         return listenToSocket(socket, eventType)
       }))
@@ -49,12 +50,16 @@ module.exports = (function(socketIo) {
     .merge(
       Bacon.combineAsArray(eventTypesToListen, incomingSockets)
         .sampledBy(incomingSockets)
-        .flatMap(function(eventTypes, socket) {
+        .flatMap(function() {
+          var eventTypes = arguments[0][0]
+          var socket = arguments[0][1]
           return Bacon.mergeAll(eventTypes.map(function(eventType) {
             return listenToSocket(socket, eventType)
           }))
         })
     )
+
+  allEvents.map('.eventType').onValue(function(){})
 
   var listenToAllSocketsOfType = function(targetEventType) {
     return allEvents.filter(function(socketEvent) {

@@ -59,7 +59,7 @@ module.exports = (function(socketIo) {
         })
     )
 
-  allEvents.map('.eventType').onValue(function(){})
+  allEvents.onValue(function(){})
 
   var listenToAllSocketsOfType = function(targetEventType) {
     return allEvents.filter(function(socketEvent) {
@@ -71,6 +71,8 @@ module.exports = (function(socketIo) {
       newEventTypeToListen.push(eventType)
       return listenToAllSocketsOfType(eventType)
     },
+    incomingSockets: incomingSockets,
+    disconnectingSockets: disconnectingSockets,
     openSockets: openSockets
   }
 })

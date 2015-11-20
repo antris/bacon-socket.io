@@ -1,6 +1,6 @@
 {
   "name": "bacon-socket.io",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A library that transforms WebSockets into Bacon EventStreams. Uses socket.io",
   "main": "index.js",
   "repository" : {
@@ -13,6 +13,6 @@
   "author": "Anton Rissanen",
   "license": "MIT",
   "dependencies": {
-    "baconjs": "0.7.53"
+    "baconjs": "*"
   }
 }
